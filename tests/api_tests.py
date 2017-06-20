@@ -134,6 +134,26 @@ class TestAPI(unittest.TestCase):
         songs = session.query(models.Song).all()
         self.assertEqual(len(songs), 1)
 
+    def test_edit_song(self):
+        """ Editing an existing song """
+
+
+    def test_delete_song(self):
+        """ Deleting an existing song """
+        songA = database.Song()
+        fileA = database.File(name="example-song.mp3")
+        songA.file = fileA
+
+        session.add_all([songA, fileA])
+        session.commit()
+
+        response = self.client.delete("/api/song/{}".format(songA.id),
+            headers=[("Accept", "application/json")]
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.mimetype, "application/json")
+
 
     def tearDown(self):
         """ Test teardown """
