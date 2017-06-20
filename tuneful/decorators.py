@@ -15,7 +15,7 @@ def accept(mimetype):
                 return func(*args, **kwargs)
             message = "Request must accept {} data".format(mimetype)
             data = json.dumps({"message": message})
-            return Response(data, 406, mimetype="application/xml")
+            return Response(data, 406, mimetype="application/json")
         return wrapper
     return decorator
 
@@ -31,6 +31,6 @@ def require(mimetype):
                 return func(*args, **kwargs)
             message = "Request must contain {} data".format(mimetype)
             data = json.dumps({"message": message})
-            return Response(data, 415, mimetype="application/xml")
+            return Response(data, 415, mimetype="application/json")
         return wrapper
     return decorator

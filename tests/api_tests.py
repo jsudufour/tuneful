@@ -30,24 +30,24 @@ class TestAPI(unittest.TestCase):
 
     # def test_unsupported_accept_header(self):
     #     response = self.client.get("/api/songs",
-    #         headers=[("Accept", "application/xml")]
+    #         headers=[("Accept", "application/json")]
     #     )
     #
     #     self.assertEqual(response.status_code, 200)
-    #     self.assertEqual(response.mimetype, "application/xml")
+    #     self.assertEqual(response.mimetype, "application/json")
     #
     #     data = json.loads(response.data.decode("ascii"))
     #     self.assertEqual(data["message"],
-    #                      "Request must accept application/xml data")
+    #                      "Request must accept application/json data")
 
     def test_get_empty_file(self):
         """Getting a file from an empty database"""
         response = self.client.get("/api/songs",
-            headers=[("Accept", "application/xml")]
+            headers=[("Accept", "application/json")]
         )
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.mimetype, "application/xml")
+        self.assertEqual(response.mimetype, "application/json")
 
         data = json.loads(response.data.decode("ascii"))
         self.assertEqual(data, [])
@@ -62,11 +62,11 @@ class TestAPI(unittest.TestCase):
         session.commit()
 
         response = self.client.get("/api/songs",
-            headers=[("Accept", "application/xml")]
+            headers=[("Accept", "application/json")]
         )
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.mimetype, "application/xml")
+        self.assertEqual(response.mimetype, "application/json")
 
         data = json.loads(response.data.decode("ascii"))
 
@@ -91,11 +91,11 @@ class TestAPI(unittest.TestCase):
         session.commit()
 
         response = self.client.get("/api/songs",
-            headers=[("Accept", "application/xml")]
+            headers=[("Accept", "application/json")]
         )
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.mimetype, "application/xml")
+        self.assertEqual(response.mimetype, "application/json")
 
         data = json.loads(response.data.decode("ascii"))
         self.assertEqual(len(data), 3)
@@ -108,6 +108,32 @@ class TestAPI(unittest.TestCase):
 
         songC = data[2]
         self.assertEqual(songC["file"], fileC.as_dictionary())
+
+    def test_post_song(self):
+        """ Adding a new song file """
+        data = {
+            "file": {
+                "id": 1
+            }
+        }
+
+        response = self.client.post("/api/songs",
+            data=json.dumps(data),
+            content_type="application/json",
+            headers=[("Accept", "application/json")]
+        )
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.mimetype, "application/json")
+        self.assertEqual(urlparse(response.headers.get("Location")).path,
+                         "/api/songs")
+
+        data = json.loads(response.data.decode("ascii"))
+        self.assertEqual(data["id"], 1)
+
+        songs = session.query(models.Song).all()
+        self.assertEqual(len(songs), 1)
+
 
     def tearDown(self):
         """ Test teardown """
