@@ -7,3 +7,4 @@ class TestingConfig(object):
     DATABASE_URI = "postgresql://thinkful:thinkful@localhost:5432/tuneful-test"
     DEBUG = True
     UPLOAD_FOLDER = "test-uploads"
+    SERVER_NAME = "localhostatat" #generates urls

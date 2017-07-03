@@ -2,6 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, Sequence, ForeignKey
+from flask import request, Response, url_for, send_from_directory
 
 from . import app
 
@@ -35,6 +36,7 @@ class File(Base):
         file = {
             "id": self.id,
             "name": self.name,
+            "path": url_for("uploaded_file", filename=self.name)
         }
         return file
 
